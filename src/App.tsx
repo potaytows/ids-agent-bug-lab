@@ -101,15 +101,11 @@ export function App() {
     );
 
     if (sort === "price-low") {
-      return [...filtered].sort((a, b) =>
-        a.price.toFixed(2).localeCompare(b.price.toFixed(2)),
-      );
+      return [...filtered].sort((a, b) => a.price - b.price);
     }
 
     if (sort === "price-high") {
-      return [...filtered].sort((a, b) =>
-        b.price.toFixed(2).localeCompare(a.price.toFixed(2)),
-      );
+      return [...filtered].sort((a, b) => b.price - a.price);
     }
 
     return filtered;
@@ -290,6 +286,7 @@ export function App() {
                     <select
                       value={sort}
                       onChange={(event) => setSort(event.target.value)}
+                      data-testid="sort-select"
                     >
                       <option value="featured">Featured</option>
                       <option value="price-low">Price: low to high</option>
