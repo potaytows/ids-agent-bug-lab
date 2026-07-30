@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap");
+
+:root {
+  font-family: "DM Sans", sans-serif;
+  color: #201a17;
+  background: #f7f0e6;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+.placeholder {
+  display: grid;
+  min-height: 100vh;
+  place-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.placeholder h1 {
+  max-width: 14ch;
+  margin: 0 auto 1rem;
+  font-family: "Space Mono", monospace;
+  font-size: clamp(2.4rem, 8vw, 6rem);
+  line-height: 0.98;
+}
+
+.eyebrow {
+  color: #d84a2f;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
