@@ -95,7 +95,10 @@ export function App() {
   const [submitting, setSubmitting] = useState(false);
 
   const visibleProducts = useMemo(() => {
-    const filtered = products.filter((product) => product.name.includes(query));
+    const normalizedQuery = query.trim().toLowerCase();
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(normalizedQuery),
+    );
 
     if (sort === "price-low") {
       return [...filtered].sort((a, b) =>
@@ -279,6 +282,7 @@ export function App() {
                       placeholder="Try “mug”"
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
+                      data-testid="product-search"
                     />
                   </label>
                   <label>
@@ -322,7 +326,9 @@ export function App() {
               {visibleProducts.length === 0 && (
                 <div className="emptyState">
                   <strong>No matches this time.</strong>
-                  <button onClick={() => setQuery("")}>Clear search</button>
+                  <button onClick={() => setQuery("")} data-testid="clear-search">
+                    Clear search
+                  </button>
                 </div>
               )}
             </section>
