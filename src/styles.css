@@ -527,7 +527,7 @@ select {
   gap: 0.8rem;
 }
 
-.productCardActions button:first-child {
+.productCardActions button[aria-pressed] {
   color: var(--coral);
 }
 
@@ -733,6 +733,68 @@ footer p {
   box-shadow: 10px 10px 0 var(--coral);
 }
 
+.quickViewModal {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(280px, 1.1fr);
+  width: min(820px, 100%);
+  max-height: calc(100vh - 2rem);
+  border: 3px solid var(--ink);
+  overflow-y: auto;
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: 10px 10px 0 var(--coral);
+}
+
+.quickViewArt {
+  display: grid;
+  min-height: 430px;
+  place-items: center;
+  border-right: 3px solid var(--ink);
+  font-family: "Space Mono", monospace;
+  font-size: 8rem;
+}
+
+.quickViewDetails {
+  align-self: center;
+  padding: clamp(2rem, 5vw, 4rem);
+}
+
+.quickViewDetails h2 {
+  margin: 0;
+  font-family: "Space Mono", monospace;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.quickViewDetails > p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.quickViewDetails dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 1.5rem 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+
+.quickViewDetails dl div {
+  padding: 0.8rem 0;
+}
+
+.quickViewDetails dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.quickViewDetails dd {
+  margin: 0.2rem 0 0;
+  font-weight: 700;
+}
+
 .modalClose {
   position: absolute;
   top: 1rem;
@@ -914,6 +976,16 @@ th {
 
   .fieldPair {
     grid-template-columns: 1fr;
+  }
+
+  .quickViewModal {
+    grid-template-columns: 1fr;
+  }
+
+  .quickViewArt {
+    min-height: 220px;
+    border-right: 0;
+    border-bottom: 3px solid var(--ink);
   }
 
   .payRow {

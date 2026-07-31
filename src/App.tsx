@@ -98,6 +98,7 @@ export function App() {
   const [view, setView] = useState<"shop" | "orders">("shop");
   const [darkMode, setDarkMode] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const visibleProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -356,6 +357,9 @@ export function App() {
                     <div className="productFooter">
                       <span>{product.stock} in stock</span>
                       <div className="productCardActions">
+                        <button onClick={() => setSelectedProduct(product)}>
+                          Quick view
+                        </button>
                         <button
                           aria-pressed={Boolean(wishlist[product.id])}
                           onClick={() => toggleWishlist(product)}
@@ -535,6 +539,62 @@ export function App() {
               </>
             )}
           </aside>
+        </div>
+      )}
+
+      {selectedProduct && (
+        <div
+          className="modalBackdrop"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <section
+            className="quickViewModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="quick-view-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              aria-label="Close product details"
+              className="closeButton modalClose"
+              onClick={() => setSelectedProduct(null)}
+            >
+              ×
+            </button>
+            <div
+              className={`quickViewArt ${selectedProduct.color}`}
+              aria-hidden="true"
+            >
+              {selectedProduct.icon}
+            </div>
+            <div className="quickViewDetails">
+              <p className="eyebrow">{selectedProduct.category}</p>
+              <h2 id="quick-view-title">{selectedProduct.name}</h2>
+              <p>
+                A practical everyday pick from the current FaultyMart
+                collection, ready to brighten a busy routine.
+              </p>
+              <dl>
+                <div>
+                  <dt>Price</dt>
+                  <dd>{money.format(selectedProduct.price)}</dd>
+                </div>
+                <div>
+                  <dt>Availability</dt>
+                  <dd>{selectedProduct.stock} in stock</dd>
+                </div>
+              </dl>
+              <button
+                className="checkoutButton"
+                onClick={() => {
+                  addToCart(selectedProduct);
+                  setSelectedProduct(null);
+                }}
+              >
+                Add to cart
+              </button>
+            </div>
+          </section>
         </div>
       )}
 

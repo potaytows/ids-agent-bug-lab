@@ -13,6 +13,8 @@ from these outcomes and test at desktop and mobile widths.
    and return to the complete catalog when All is selected.
 6. Saving and unsaving a product updates its control and the Saved count.
    Activating Saved in the header toggles between all products and saved items.
+7. Quick view opens the selected product's details, closes from its close
+   control or backdrop, and adds the displayed product to the cart.
 
 ## Cart and pricing
 
