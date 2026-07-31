@@ -86,6 +86,8 @@ export function App() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
   const [category, setCategory] = useState("All");
+  const [wishlist, setWishlist] = useState<Record<number, boolean>>({});
+  const [wishlistOnly, setWishlistOnly] = useState(false);
   const [cart, setCart] = useState<Record<number, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -102,6 +104,7 @@ export function App() {
     const filtered = products.filter(
       (product) =>
         (category === "All" || product.category === category) &&
+        (!wishlistOnly || wishlist[product.id]) &&
         product.name.toLowerCase().includes(normalizedQuery),
     );
 
@@ -114,13 +117,14 @@ export function App() {
     }
 
     return filtered;
-  }, [category, query, sort]);
+  }, [category, query, sort, wishlist, wishlistOnly]);
 
   const cartLines: CartLine[] = products
     .filter((product) => cart[product.id] !== undefined)
     .map((product) => ({ ...product, quantity: cart[product.id] }));
 
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
+  const wishlistCount = Object.values(wishlist).filter(Boolean).length;
   const subtotal = cartLines.reduce(
     (sum, line) => sum + line.price * Math.max(line.quantity, 1),
     0,
@@ -136,6 +140,18 @@ export function App() {
     }));
     setNotice(`${product.name} added to cart.`);
     window.setTimeout(() => setNotice(""), 1800);
+  }
+
+  function toggleWishlist(product: Product) {
+    setWishlist((current) => ({
+      ...current,
+      [product.id]: !current[product.id],
+    }));
+    setNotice(
+      wishlist[product.id]
+        ? `${product.name} removed from saved items.`
+        : `${product.name} saved for later.`,
+    );
   }
 
   function changeQuantity(id: number, change: number) {
@@ -231,6 +247,13 @@ export function App() {
         </nav>
 
         <div className="headerActions">
+          <button
+            aria-pressed={wishlistOnly}
+            className={wishlistOnly ? "savedButton savedButtonActive" : "savedButton"}
+            onClick={() => setWishlistOnly((current) => !current)}
+          >
+            Saved <span>{wishlistCount}</span>
+          </button>
           <button
             className="iconButton"
             onClick={toggleTheme}
@@ -332,7 +355,15 @@ export function App() {
                     </div>
                     <div className="productFooter">
                       <span>{product.stock} in stock</span>
-                      <button onClick={() => addToCart(product)}>Add to cart</button>
+                      <div className="productCardActions">
+                        <button
+                          aria-pressed={Boolean(wishlist[product.id])}
+                          onClick={() => toggleWishlist(product)}
+                        >
+                          {wishlist[product.id] ? "Saved" : "Save"}
+                        </button>
+                        <button onClick={() => addToCart(product)}>Add to cart</button>
+                      </div>
                     </div>
                   </article>
                 ))}

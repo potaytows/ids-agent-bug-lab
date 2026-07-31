@@ -137,6 +137,32 @@ nav button:hover,
   gap: 0.4rem;
 }
 
+.savedButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  background: var(--paper);
+  cursor: pointer;
+}
+
+.savedButton span {
+  display: grid;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--paper-deep);
+  font-size: 0.72rem;
+}
+
+.savedButtonActive {
+  color: var(--paper);
+  background: var(--ink);
+}
+
 .iconButton {
   width: 2.65rem;
   border: 1px solid var(--ink);
@@ -496,6 +522,15 @@ select {
   cursor: pointer;
 }
 
+.productCardActions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.productCardActions button:first-child {
+  color: var(--coral);
+}
+
 .emptyState {
   max-width: 1440px;
   margin: 2rem auto 0;
@@ -833,6 +868,10 @@ th {
   .iconButton,
   .topbar nav {
     display: none;
+  }
+
+  .savedButton {
+    padding-inline: 0.6rem;
   }
 
   .hero,

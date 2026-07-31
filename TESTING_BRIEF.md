@@ -11,6 +11,8 @@ from these outcomes and test at desktop and mobile widths.
 4. The theme preference survives a reload.
 5. Category filters show only matching products, combine with search and sort,
    and return to the complete catalog when All is selected.
+6. Saving and unsaving a product updates its control and the Saved count.
+   Activating Saved in the header toggles between all products and saved items.
 
 ## Cart and pricing
 
