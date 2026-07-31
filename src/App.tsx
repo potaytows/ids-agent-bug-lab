@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
+import { DeliveryEstimator } from "./DeliveryEstimator";
 
 type Product = {
   id: number;
@@ -292,6 +293,8 @@ export function App() {
                 </p>
               </div>
             </section>
+
+            <DeliveryEstimator />
 
             <section className="catalog" id="catalog" aria-labelledby="catalog-title">
               <div className="catalogHeading">

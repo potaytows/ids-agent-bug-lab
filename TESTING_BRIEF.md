@@ -15,6 +15,8 @@ from these outcomes and test at desktop and mobile widths.
    Activating Saved in the header toggles between all products and saved items.
 7. Quick view opens the selected product's details, closes from its close
    control or backdrop, and adds the displayed product to the cart.
+8. Delivery estimation rejects non-5-digit postal codes and returns a mock
+   business-day estimate for both Standard and Express methods.
 
 ## Cart and pricing
 
