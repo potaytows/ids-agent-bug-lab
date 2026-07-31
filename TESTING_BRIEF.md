@@ -9,6 +9,8 @@ from these outcomes and test at desktop and mobile widths.
 2. Price sorting is numeric in both directions.
 3. Adding a product increments that product and the cart badge.
 4. The theme preference survives a reload.
+5. Category filters show only matching products, combine with search and sort,
+   and return to the complete catalog when All is selected.
 
 ## Cart and pricing
 
@@ -32,4 +34,3 @@ from these outcomes and test at desktop and mobile widths.
 1. The storefront and both dialogs fit a 320px-wide viewport without horizontal
    scrolling.
 2. Shop and Orders remain reachable on small screens.
-

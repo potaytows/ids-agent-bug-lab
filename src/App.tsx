@@ -75,6 +75,8 @@ const products: Product[] = [
   },
 ];
 
+const categories = ["All", ...new Set(products.map((product) => product.category))];
+
 const money = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -83,6 +85,7 @@ const money = new Intl.NumberFormat("en-US", {
 export function App() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
+  const [category, setCategory] = useState("All");
   const [cart, setCart] = useState<Record<number, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -96,8 +99,10 @@ export function App() {
 
   const visibleProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(normalizedQuery),
+    const filtered = products.filter(
+      (product) =>
+        (category === "All" || product.category === category) &&
+        product.name.toLowerCase().includes(normalizedQuery),
     );
 
     if (sort === "price-low") {
@@ -109,7 +114,7 @@ export function App() {
     }
 
     return filtered;
-  }, [query, sort]);
+  }, [category, query, sort]);
 
   const cartLines: CartLine[] = products
     .filter((product) => cart[product.id] !== undefined)
@@ -294,6 +299,19 @@ export function App() {
                     </select>
                   </label>
                 </div>
+              </div>
+
+              <div className="categoryFilters" aria-label="Product categories">
+                {categories.map((item) => (
+                  <button
+                    aria-pressed={category === item}
+                    className={category === item ? "categoryActive" : ""}
+                    key={item}
+                    onClick={() => setCategory(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
 
               <p className="resultCount">{visibleProducts.length} products</p>

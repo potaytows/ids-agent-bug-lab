@@ -333,6 +333,30 @@ select {
   width: min(280px, 30vw);
 }
 
+.categoryFilters {
+  display: flex;
+  max-width: 1440px;
+  margin: 2rem auto 0;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.categoryFilters button {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  background: var(--paper);
+  cursor: pointer;
+}
+
+.categoryFilters button:hover,
+.categoryFilters .categoryActive {
+  color: var(--paper);
+  background: var(--ink);
+}
+
 .resultCount {
   max-width: 1440px;
   margin: 1.8rem auto 0.8rem;
@@ -832,6 +856,10 @@ th {
     width: 100%;
   }
 
+  .categoryFilters {
+    margin-top: 1.5rem;
+  }
+
   .productGrid {
     grid-template-columns: 1fr;
   }
@@ -859,4 +887,3 @@ th {
     min-width: 680px;
   }
 }
-
