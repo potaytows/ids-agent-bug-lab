@@ -854,6 +854,76 @@ footer p {
   font-weight: 700;
 }
 
+.comparisonTray {
+  position: fixed;
+  z-index: 35;
+  right: 50%;
+  bottom: 1.25rem;
+  display: flex;
+  width: min(620px, calc(100vw - 2rem));
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  transform: translateX(50%);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  background: var(--mustard);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.comparisonTray p {
+  margin: 0;
+}
+
+.comparisonTray > div {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.comparisonOpenButton {
+  padding: 0.65rem 0.9rem;
+  border: 2px solid var(--ink);
+  color: var(--paper);
+  background: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.comparisonOpenButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.comparisonModal {
+  width: min(980px, 100%);
+  max-height: calc(100vh - 2rem);
+  padding: 2rem;
+  border: 3px solid var(--ink);
+  overflow: auto;
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: 10px 10px 0 var(--coral);
+}
+
+.comparisonTableWrap {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+}
+
+.comparisonTable {
+  min-width: 680px;
+  border: 2px solid var(--ink);
+}
+
+.comparisonTable th:first-child {
+  width: 130px;
+}
+
+.comparisonTable td {
+  min-width: 160px;
+}
+
 .modalClose {
   position: absolute;
   top: 1rem;
@@ -1064,6 +1134,16 @@ th {
     align-items: stretch;
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .comparisonTray {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .comparisonTray > div {
+    justify-content: space-between;
   }
 
   .cartDrawer {

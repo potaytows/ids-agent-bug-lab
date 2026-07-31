@@ -100,6 +100,8 @@ export function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [comparisonIds, setComparisonIds] = useState<number[]>([]);
+  const [comparisonOpen, setComparisonOpen] = useState(false);
 
   const visibleProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -124,6 +126,9 @@ export function App() {
   const cartLines: CartLine[] = products
     .filter((product) => cart[product.id] !== undefined)
     .map((product) => ({ ...product, quantity: cart[product.id] }));
+  const comparisonProducts = products.filter((product) =>
+    comparisonIds.includes(product.id),
+  );
 
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const wishlistCount = Object.values(wishlist).filter(Boolean).length;
@@ -154,6 +159,23 @@ export function App() {
         ? `${product.name} removed from saved items.`
         : `${product.name} saved for later.`,
     );
+  }
+
+  function toggleComparison(product: Product) {
+    setComparisonIds((current) => {
+      if (current.includes(product.id)) {
+        const next = current.filter((id) => id !== product.id);
+        if (next.length < 2) setComparisonOpen(false);
+        return next;
+      }
+
+      if (current.length === 3) {
+        setNotice("Compare up to three products at a time.");
+        return current;
+      }
+
+      return [...current, product.id];
+    });
   }
 
   function changeQuantity(id: number, change: number) {
@@ -362,6 +384,14 @@ export function App() {
                       <div className="productCardActions">
                         <button onClick={() => setSelectedProduct(product)}>
                           Quick view
+                        </button>
+                        <button
+                          aria-pressed={comparisonIds.includes(product.id)}
+                          onClick={() => toggleComparison(product)}
+                        >
+                          {comparisonIds.includes(product.id)
+                            ? "Comparing"
+                            : "Compare"}
                         </button>
                         <button
                           aria-pressed={Boolean(wishlist[product.id])}
@@ -601,6 +631,80 @@ export function App() {
         </div>
       )}
 
+      {comparisonOpen && (
+        <div
+          className="modalBackdrop"
+          onClick={() => setComparisonOpen(false)}
+        >
+          <section
+            className="comparisonModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="comparison-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="drawerHeader">
+              <div>
+                <p className="eyebrow">Side by side</p>
+                <h2 id="comparison-title">Product comparison</h2>
+              </div>
+              <button
+                aria-label="Close product comparison"
+                className="closeButton"
+                onClick={() => setComparisonOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="comparisonTableWrap">
+              <table className="comparisonTable">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    {comparisonProducts.map((product) => (
+                      <th key={product.id}>{product.name}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Category</th>
+                    {comparisonProducts.map((product) => (
+                      <td key={product.id}>{product.category}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <th>Price</th>
+                    {comparisonProducts.map((product) => (
+                      <td key={product.id}>{money.format(product.price)}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <th>Stock</th>
+                    {comparisonProducts.map((product) => (
+                      <td key={product.id}>{product.stock}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <th>Actions</th>
+                    {comparisonProducts.map((product) => (
+                      <td key={product.id}>
+                        <button
+                          className="textButton"
+                          onClick={() => toggleComparison(product)}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      )}
+
       {checkoutOpen && (
         <div className="modalBackdrop">
           <section
@@ -660,6 +764,29 @@ export function App() {
             </form>
           </section>
         </div>
+      )}
+
+      {comparisonIds.length > 0 && !comparisonOpen && (
+        <aside className="comparisonTray" aria-label="Product comparison">
+          <p>
+            <strong>{comparisonIds.length}</strong> of 3 selected
+          </p>
+          <div>
+            <button
+              className="textButton"
+              onClick={() => setComparisonIds([])}
+            >
+              Clear
+            </button>
+            <button
+              className="comparisonOpenButton"
+              disabled={comparisonIds.length < 2}
+              onClick={() => setComparisonOpen(true)}
+            >
+              Compare products
+            </button>
+          </div>
+        </aside>
       )}
 
       {notice && <div className="toast">{notice}</div>}
