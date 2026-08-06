@@ -19,6 +19,9 @@ test("a shopper can reach the mock checkout", async ({ page }) => {
   await page.getByRole("button", { name: "Continue to checkout" }).click();
 
   await expect(page.getByRole("heading", { name: "Checkout" })).toBeVisible();
-  await expect(page.getByText("This demo never sends or stores your details.")).toBeVisible();
+  await expect(
+    page.getByText(
+      "This local QA demo stores submitted orders in the FaultyMart MySQL test database. Use test data only.",
+    ),
+  ).toBeVisible();
 });
-

@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { DeliveryEstimator } from "./DeliveryEstimator";
 
 type Product = {
@@ -19,7 +19,7 @@ type Order = {
   status: "Processing" | "Cancelled";
 };
 
-const products: Product[] = [
+const fallbackProducts: Product[] = [
   {
     id: 1,
     name: "Orbit Desk Lamp",
@@ -76,14 +76,16 @@ const products: Product[] = [
   },
 ];
 
-const categories = ["All", ...new Set(products.map((product) => product.category))];
-
 const money = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
 export function App() {
+  const [products, setProducts] = useState<Product[]>(fallbackProducts);
+  const [databaseStatus, setDatabaseStatus] = useState<
+    "checking" | "connected" | "offline"
+  >("checking");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
   const [category, setCategory] = useState("All");
@@ -103,6 +105,44 @@ export function App() {
   const [comparisonIds, setComparisonIds] = useState<number[]>([]);
   const [comparisonOpen, setComparisonOpen] = useState(false);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadDatabaseState() {
+      try {
+        const [productsResponse, ordersResponse] = await Promise.all([
+          fetch("/api/products"),
+          fetch("/api/orders"),
+        ]);
+
+        if (!productsResponse.ok || !ordersResponse.ok) {
+          throw new Error("Database API unavailable");
+        }
+
+        const productsPayload = await productsResponse.json();
+        const ordersPayload = await ordersResponse.json();
+
+        if (!cancelled) {
+          setProducts(productsPayload.products);
+          setOrders(ordersPayload.orders);
+          setDatabaseStatus("connected");
+        }
+      } catch {
+        if (!cancelled) setDatabaseStatus("offline");
+      }
+    }
+
+    void loadDatabaseState();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const categories = useMemo(
+    () => ["All", ...new Set(products.map((product) => product.category))],
+    [products],
+  );
+
   const visibleProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     const filtered = products.filter(
@@ -121,7 +161,7 @@ export function App() {
     }
 
     return filtered;
-  }, [category, query, sort, wishlist, wishlistOnly]);
+  }, [category, products, query, sort, wishlist, wishlistOnly]);
 
   const cartLines: CartLine[] = products
     .filter((product) => cart[product.id] !== undefined)
@@ -206,7 +246,7 @@ export function App() {
     localStorage.setItem("faultymart-theme", next ? "dark" : "light");
   }
 
-  function submitOrder(event: FormEvent<HTMLFormElement>) {
+  async function submitOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") ?? "");
@@ -218,21 +258,41 @@ export function App() {
     }
 
     setSubmitting(true);
-    window.setTimeout(() => {
-      setOrders((current) => [
-        ...current,
-        {
-          id: `FM-${Math.floor(1000 + Math.random() * 9000)}`,
-          total,
-          status: "Processing",
-        },
-      ]);
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: {
+            name,
+            email: String(form.get("email") ?? ""),
+            address: String(form.get("address") ?? ""),
+            city: String(form.get("city") ?? ""),
+            postal: String(form.get("postal") ?? ""),
+          },
+          totals: { subtotal, discount, shipping, total },
+          items: cartLines.map((line) => ({
+            id: line.id,
+            name: line.name,
+            price: line.price,
+            quantity: line.quantity,
+          })),
+        }),
+      });
+
+      if (!response.ok) throw new Error("Order could not be saved");
+
+      const payload = await response.json();
+      setOrders((current) => [payload.order, ...current]);
       setSubmitting(false);
       setCheckoutOpen(false);
       setCartOpen(false);
       setCart({});
-      setNotice("Order placed! You can review it in Orders.");
-    }, 900);
+      setNotice("Order saved to MySQL! You can review it in Orders.");
+    } catch {
+      setSubmitting(false);
+      setNotice("Could not save the order. Check the local database connection.");
+    }
   }
 
   function cancelOrder(_id: string) {
@@ -271,6 +331,14 @@ export function App() {
         </nav>
 
         <div className="headerActions">
+          <span
+            className={`databaseStatus ${databaseStatus}`}
+            data-testid="database-status"
+            title="Local MySQL connection status"
+          >
+            <span aria-hidden="true" />
+            DB {databaseStatus}
+          </span>
           <button
             aria-pressed={wishlistOnly}
             className={wishlistOnly ? "savedButton savedButtonActive" : "savedButton"}
@@ -722,7 +790,7 @@ export function App() {
             <p className="eyebrow">Almost yours</p>
             <h2 id="checkout-title">Checkout</h2>
             <p className="checkoutIntro">
-              This demo never sends or stores your details.
+              This local QA demo stores submitted orders in the FaultyMart MySQL test database. Use test data only.
             </p>
             <form onSubmit={submitOrder} noValidate>
               <div className="fieldPair">

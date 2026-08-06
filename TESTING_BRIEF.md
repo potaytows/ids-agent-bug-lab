@@ -38,6 +38,18 @@ from these outcomes and test at desktop and mobile widths.
 4. Cart and checkout dialogs close with Escape, keep keyboard focus inside, and
    return focus to their trigger.
 
+## MySQL verification
+
+1. The header database status changes to Connected when the API can query
+   MySQL, and the six seeded products load from the `products` table.
+2. Placing one mock order creates one `orders` record and matching
+   `order_items` records in a single transaction.
+3. Saved orders remain visible after reloading the application.
+4. The `ids_reader` Coco connection can query all three test tables but cannot
+   insert, update, or delete records.
+5. If MySQL or the API is unavailable, the catalog falls back to its bundled
+   products and checkout reports that the order could not be saved.
+
 ## Responsive behavior
 
 1. The storefront and both dialogs fit a 320px-wide viewport without horizontal

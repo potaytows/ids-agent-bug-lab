@@ -4,21 +4,29 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -k -n web,api -c cyan,magenta \"npm:dev:web\" \"npm:dev:api\"",
+    "dev:web": "vite --host 127.0.0.1 --port 4173",
+    "dev:api": "node --env-file-if-exists=.env server/index.mjs",
     "build": "tsc -b && node scripts/clean-build.mjs && vite build --outDir dist/client && node scripts/build-worker.mjs",
     "preview": "vite preview",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:up": "docker compose up -d mysql",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d mysql",
+    "db:connection": "node scripts/show-db-connection.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "typescript": "latest",
+    "mysql2": "^3.23.2",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest"
   },
   "devDependencies": {
     "@playwright/test": "latest",
     "@types/react": "latest",
-    "@types/react-dom": "latest"
+    "@types/react-dom": "latest",
+    "concurrently": "^10.0.4"
   }
 }

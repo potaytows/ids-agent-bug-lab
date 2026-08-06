@@ -133,8 +133,35 @@ nav button:hover,
 
 .headerActions {
   display: flex;
+  align-items: center;
   justify-self: end;
   gap: 0.4rem;
+}
+
+.databaseStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--ink);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.databaseStatus > span {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--mustard);
+}
+
+.databaseStatus.connected > span {
+  background: var(--teal);
+}
+
+.databaseStatus.offline > span {
+  background: var(--coral);
 }
 
 .savedButton {
@@ -1061,6 +1088,7 @@ th {
 
   .brand > span:last-child,
   .iconButton,
+  .databaseStatus,
   .topbar nav {
     display: none;
   }
