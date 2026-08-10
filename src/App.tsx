@@ -108,6 +108,10 @@ export function App() {
   const [comparisonOpen, setComparisonOpen] = useState(false);
 
   useEffect(() => {
+    document.body.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function loadDatabaseState() {
