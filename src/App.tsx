@@ -99,7 +99,9 @@ export function App() {
   const [notice, setNotice] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [view, setView] = useState<"shop" | "orders">("shop");
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("faultymart-theme") === "dark",
+  );
   const [submitting, setSubmitting] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [comparisonIds, setComparisonIds] = useState<number[]>([]);
@@ -348,6 +350,7 @@ export function App() {
           </button>
           <button
             className="iconButton"
+            data-testid="theme-toggle"
             onClick={toggleTheme}
             title="Toggle theme"
           >
