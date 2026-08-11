@@ -877,7 +877,15 @@ export function App() {
         </aside>
       )}
 
-      {notice && <div className="toast">{notice}</div>}
+      <div
+        className={`toast${notice ? " toastVisible" : ""}`}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="cart-toast"
+      >
+        {notice}
+      </div>
     </div>
   );
 }
