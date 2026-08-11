@@ -487,7 +487,12 @@ export function App() {
                         >
                           {wishlist[product.id] ? "Saved" : "Save"}
                         </button>
-                        <button onClick={() => addToCart(product)}>Add to cart</button>
+                        <button
+                          data-testid={`add-to-cart-${product.id}`}
+                          onClick={() => addToCart(product)}
+                        >
+                          Add to cart
+                        </button>
                       </div>
                     </div>
                   </article>
@@ -877,15 +882,17 @@ export function App() {
         </aside>
       )}
 
-      <div
-        className={`toast${notice ? " toastVisible" : ""}`}
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        data-testid="cart-toast"
-      >
-        {notice}
-      </div>
+      {notice && (
+        <div
+          className="toast toastVisible"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          data-testid="cart-toast"
+        >
+          {notice}
+        </div>
+      )}
     </div>
   );
 }
