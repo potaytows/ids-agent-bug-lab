@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { DeliveryEstimator } from "./DeliveryEstimator";
 
 type Product = {
@@ -103,6 +103,7 @@ export function App() {
     () => localStorage.getItem("faultymart-theme") === "dark",
   );
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [comparisonIds, setComparisonIds] = useState<number[]>([]);
   const [comparisonOpen, setComparisonOpen] = useState(false);
@@ -254,11 +255,21 @@ export function App() {
 
   async function submitOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    // Guard against duplicate submissions synchronously. React state updates
+    // (setSubmitting) are asynchronous and batched, so a second click landing
+    // in the same render tick would otherwise pass any state-based check and
+    // fire a second POST. The ref flips before any await, making the guard
+    // effective immediately on the first invocation.
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") ?? "");
     const card = String(form.get("card") ?? "");
 
     if (!name || card.length < 8) {
+      submittingRef.current = false;
       setNotice("Please check your payment details.");
       return;
     }
@@ -291,12 +302,14 @@ export function App() {
       const payload = await response.json();
       setOrders((current) => [payload.order, ...current]);
       setSubmitting(false);
+      submittingRef.current = false;
       setCheckoutOpen(false);
       setCartOpen(false);
       setCart({});
       setNotice("Order saved to MySQL! You can review it in Orders.");
     } catch {
       setSubmitting(false);
+      submittingRef.current = false;
       setNotice("Could not save the order. Check the local database connection.");
     }
   }
@@ -832,7 +845,7 @@ export function App() {
                 <p>
                   Total <strong>{money.format(total)}</strong>
                 </p>
-                <button type="submit">
+                <button type="submit" disabled={submitting} data-testid="place-order-button">
                   {submitting ? "Placing order…" : "Place mock order"}
                 </button>
               </div>
