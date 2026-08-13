@@ -206,7 +206,7 @@ export function App() {
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const wishlistCount = Object.values(wishlist).filter(Boolean).length;
   const subtotal = cartLines.reduce(
-    (sum, line) => sum + line.price * Math.max(line.quantity, 1),
+    (sum, line) => sum + line.price * line.quantity,
     0,
   );
   const discount = couponApplied ? 0.1 : 0;
@@ -252,10 +252,22 @@ export function App() {
   }
 
   function changeQuantity(id: number, change: number) {
-    setCart((current) => ({
-      ...current,
-      [id]: (current[id] ?? 0) + change,
-    }));
+    setCart((current) => {
+      const nextQuantity = (current[id] ?? 0) + change;
+      // Decrementing a line below one removes it, equivalent to Remove.
+      // This keeps quantity, cart count, and totals consistent and never
+      // lets the stored value fall to zero or below.
+      if (nextQuantity < 1) {
+        const next = { ...current };
+        delete next[id];
+        return next;
+      }
+
+      return {
+        ...current,
+        [id]: nextQuantity,
+      };
+    });
   }
 
   function removeLine(_id: number) {
@@ -709,11 +721,19 @@ export function App() {
                         <h3>{line.name}</h3>
                         <p>{money.format(line.price)}</p>
                         <div className="quantity">
-                          <button onClick={() => changeQuantity(line.id, -1)}>
+                          <button
+                            onClick={() => changeQuantity(line.id, -1)}
+                            data-testid={`cart-decrement-${line.id}`}
+                            aria-label={`Decrease quantity of ${line.name}`}
+                          >
                             −
                           </button>
-                          <output>{line.quantity}</output>
-                          <button onClick={() => changeQuantity(line.id, 1)}>
+                          <output data-testid={`cart-quantity-${line.id}`}>{line.quantity}</output>
+                          <button
+                            onClick={() => changeQuantity(line.id, 1)}
+                            data-testid={`cart-increment-${line.id}`}
+                            aria-label={`Increase quantity of ${line.name}`}
+                          >
                             +
                           </button>
                         </div>
