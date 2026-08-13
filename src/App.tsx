@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { DeliveryEstimator } from "./DeliveryEstimator";
+import { useDialogAccessibility } from "./useDialogAccessibility";
 
 type Product = {
   id: number;
@@ -107,6 +108,21 @@ export function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [comparisonIds, setComparisonIds] = useState<number[]>([]);
   const [comparisonOpen, setComparisonOpen] = useState(false);
+
+  // Initial-focus targets for the accessible dialogs.
+  const cartTitleRef = useRef<HTMLHeadingElement | null>(null);
+  const checkoutCloseRef = useRef<HTMLButtonElement | null>(null);
+
+  // Cart dialog: Escape-to-close, focus trap, initial focus, focus restoration.
+  const cartDialog = useDialogAccessibility(cartOpen, () => setCartOpen(false), {
+    initialFocus: cartTitleRef,
+  });
+  // Checkout dialog: same four behaviours.
+  const checkoutDialog = useDialogAccessibility(
+    checkoutOpen,
+    () => setCheckoutOpen(false),
+    { initialFocus: checkoutCloseRef },
+  );
 
   useEffect(() => {
     document.body.classList.toggle("dark", darkMode);
@@ -373,7 +389,11 @@ export function App() {
           >
             {darkMode ? "☀" : "☾"}
           </button>
-          <button className="cartButton" onClick={() => setCartOpen(true)}>
+          <button
+            className="cartButton"
+            onClick={() => setCartOpen(true)}
+            data-testid="cart-button"
+          >
             Cart <span className="cartCount">{cartCount}</span>
           </button>
         </div>
@@ -581,14 +601,22 @@ export function App() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="cart-title"
+            ref={cartDialog.setRef}
             onClick={(event) => event.stopPropagation()}
           >
             <div className="drawerHeader">
               <div>
                 <p className="eyebrow">Your selection</p>
-                <h2 id="cart-title">Shopping cart</h2>
+                <h2 id="cart-title" ref={cartTitleRef} tabIndex={-1} data-testid="cart-title">
+                  Shopping cart
+                </h2>
               </div>
-              <button className="closeButton" onClick={() => setCartOpen(false)}>
+              <button
+                className="closeButton"
+                onClick={() => setCartOpen(false)}
+                aria-label="Close cart"
+                data-testid="cart-close"
+              >
                 ×
               </button>
             </div>
@@ -663,6 +691,7 @@ export function App() {
                 <button
                   className="checkoutButton"
                   onClick={() => setCheckoutOpen(true)}
+                  data-testid="open-checkout"
                 >
                   Continue to checkout
                 </button>
@@ -803,16 +832,24 @@ export function App() {
       )}
 
       {checkoutOpen && (
-        <div className="modalBackdrop">
+        <div
+          className="modalBackdrop"
+          onClick={() => setCheckoutOpen(false)}
+        >
           <section
             className="checkoutModal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="checkout-title"
+            ref={checkoutDialog.setRef}
+            onClick={(event) => event.stopPropagation()}
           >
             <button
+              ref={checkoutCloseRef}
               className="closeButton modalClose"
               onClick={() => setCheckoutOpen(false)}
+              aria-label="Close checkout"
+              data-testid="checkout-close"
             >
               ×
             </button>
