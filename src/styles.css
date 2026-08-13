@@ -524,11 +524,29 @@ select {
   background: var(--ink);
 }
 
-.resultCount {
+.catalogSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   max-width: 1440px;
   margin: 1.8rem auto 0.8rem;
+  gap: 1rem;
+}
+
+.resultCount {
+  margin: 0;
   color: var(--muted);
   font-size: 0.86rem;
+}
+
+.clearSavedButton {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  color: var(--ink);
+  background: transparent;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .productGrid {

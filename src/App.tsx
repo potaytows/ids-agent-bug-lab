@@ -234,6 +234,12 @@ export function App() {
     );
   }
 
+  function clearSavedItems() {
+    setWishlist({});
+    setWishlistOnly(false);
+    setNotice("Saved items cleared.");
+  }
+
   function toggleComparison(product: Product) {
     setComparisonIds((current) => {
       if (current.includes(product.id)) {
@@ -438,6 +444,7 @@ export function App() {
             aria-pressed={wishlistOnly}
             className={wishlistOnly ? "savedButton savedButtonActive" : "savedButton"}
             onClick={() => setWishlistOnly((current) => !current)}
+            data-testid="saved-items-toggle"
           >
             Saved <span>{wishlistCount}</span>
           </button>
@@ -540,9 +547,21 @@ export function App() {
                 ))}
               </div>
 
-              <p className="resultCount" data-testid="product-result-count">
-                {visibleProducts.length} products
-              </p>
+              <div className="catalogSummary">
+                <p className="resultCount" data-testid="product-result-count">
+                  {visibleProducts.length} products
+                </p>
+                {wishlistCount > 0 && (
+                  <button
+                    className="clearSavedButton"
+                    type="button"
+                    onClick={clearSavedItems}
+                    data-testid="clear-saved-items"
+                  >
+                    Clear saved items
+                  </button>
+                )}
+              </div>
 
               <div className="productGrid" data-testid="product-grid">
                 {visibleProducts.map((product) => (
@@ -575,6 +594,7 @@ export function App() {
                         <button
                           aria-pressed={Boolean(wishlist[product.id])}
                           onClick={() => toggleWishlist(product)}
+                          data-testid={`save-product-${product.id}`}
                         >
                           {wishlist[product.id] ? "Saved" : "Save"}
                         </button>

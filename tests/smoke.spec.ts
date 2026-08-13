@@ -42,3 +42,21 @@ test("a shopper can reset catalog filters", async ({ page }) => {
   );
   await expect(page.getByTestId("product-result-count")).toHaveText("6 products");
 });
+
+test("a shopper can clear all saved items", async ({ page }) => {
+  await page.goto("/");
+  await page.getByTestId("save-product-1").click();
+  await page.getByTestId("saved-items-toggle").click();
+
+  await expect(page.getByTestId("product-result-count")).toHaveText("1 products");
+
+  await page.getByTestId("clear-saved-items").click();
+
+  await expect(page.getByTestId("saved-items-toggle")).toContainText("0");
+  await expect(page.getByTestId("saved-items-toggle")).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
+  await expect(page.getByTestId("product-result-count")).toHaveText("6 products");
+  await expect(page.getByTestId("clear-saved-items")).toHaveCount(0);
+});
