@@ -923,17 +923,20 @@ export function App() {
         </aside>
       )}
 
-      {notice && (
-        <div
-          className="toast toastVisible"
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-          data-testid="cart-toast"
-        >
-          {notice}
-        </div>
-      )}
+      {/* Persistent ARIA live region: keep this node in the DOM at all
+          times so assistive technology detects the text mutation and
+          announces the message. Rendering it only while a message exists
+          would create the node already populated, which many screen
+          readers do not announce. */}
+      <div
+        className={`toast${notice ? " toastVisible" : ""}`}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="cart-toast"
+      >
+        {notice}
+      </div>
     </div>
   );
 }
