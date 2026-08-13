@@ -1272,6 +1272,8 @@ th {
   }
 
   .cartDrawer {
-    min-width: 680px;
+    /* Fit the viewport on phone-sized screens; override any inherited min-width. */
+    width: 100%;
+    min-width: 0;
   }
 }
