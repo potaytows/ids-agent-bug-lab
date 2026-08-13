@@ -651,6 +651,7 @@ export function App() {
         <div className="drawerBackdrop" onClick={() => setCartOpen(false)}>
           <aside
             className="cartDrawer"
+            data-testid="cart-drawer"
             role="dialog"
             aria-modal="true"
             aria-labelledby="cart-title"
