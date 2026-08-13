@@ -108,10 +108,13 @@ export function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [comparisonIds, setComparisonIds] = useState<number[]>([]);
   const [comparisonOpen, setComparisonOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Initial-focus targets for the accessible dialogs.
   const cartTitleRef = useRef<HTMLHeadingElement | null>(null);
   const checkoutCloseRef = useRef<HTMLButtonElement | null>(null);
+  const mobileNavRef = useRef<HTMLElement | null>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement | null>(null);
 
   // Cart dialog: Escape-to-close, focus trap, initial focus, focus restoration.
   const cartDialog = useDialogAccessibility(cartOpen, () => setCartOpen(false), {
@@ -122,6 +125,13 @@ export function App() {
     checkoutOpen,
     () => setCheckoutOpen(false),
     { initialFocus: checkoutCloseRef },
+  );
+  // Mobile navigation dialog: keeps keyboard focus inside the menu, closes on
+  // Escape, and restores focus to the toggle button.
+  const mobileNavDialog = useDialogAccessibility(
+    mobileNavOpen,
+    () => setMobileNavOpen(false),
+    { initialFocus: mobileNavRef },
   );
 
   useEffect(() => {
@@ -350,7 +360,19 @@ export function App() {
           <span>FaultyMart</span>
         </button>
 
-        <nav aria-label="Primary navigation">
+        <button
+          className="navToggle"
+          aria-expanded={mobileNavOpen}
+          aria-controls="mobile-navigation"
+          aria-haspopup="menu"
+          ref={mobileMenuButtonRef}
+          data-testid="mobile-nav-toggle"
+          onClick={() => setMobileNavOpen((current) => !current)}
+        >
+          {mobileNavOpen ? "Close menu" : "Menu"}
+        </button>
+
+        <nav aria-label="Primary navigation" className="desktopNav">
           <button
             className={view === "shop" ? "navActive" : ""}
             onClick={() => setView("shop")}
@@ -364,6 +386,37 @@ export function App() {
             Orders
           </button>
         </nav>
+
+        {mobileNavOpen && (
+          <nav
+            id="mobile-navigation"
+            aria-label="Mobile primary navigation"
+            className="mobileNav"
+            ref={mobileNavDialog.setRef}
+            tabIndex={-1}
+          >
+            <button
+              className={view === "shop" ? "navActive" : ""}
+              onClick={() => {
+                setView("shop");
+                setMobileNavOpen(false);
+              }}
+              data-testid="mobile-nav-shop"
+            >
+              Shop
+            </button>
+            <button
+              className={view === "orders" ? "navActive" : ""}
+              onClick={() => {
+                setView("orders");
+                setMobileNavOpen(false);
+              }}
+              data-testid="mobile-nav-orders"
+            >
+              Orders
+            </button>
+          </nav>
+        )}
 
         <div className="headerActions">
           <span
