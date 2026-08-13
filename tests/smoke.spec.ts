@@ -25,3 +25,20 @@ test("a shopper can reach the mock checkout", async ({ page }) => {
     ),
   ).toBeVisible();
 });
+
+test("a shopper can reset catalog filters", async ({ page }) => {
+  await page.goto("/");
+  await page.getByTestId("product-search").fill("mug");
+
+  await expect(page.getByTestId("product-result-count")).toHaveText("1 products");
+
+  await page.getByTestId("reset-catalog-filters").click();
+
+  await expect(page.getByTestId("product-search")).toHaveValue("");
+  await expect(page.getByTestId("sort-select")).toHaveValue("featured");
+  await expect(page.getByTestId("category-filter-all")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.getByTestId("product-result-count")).toHaveText("6 products");
+});

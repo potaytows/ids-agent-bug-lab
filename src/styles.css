@@ -462,7 +462,19 @@ nav button:hover,
 
 .filters {
   display: flex;
+  align-items: end;
   gap: 1rem;
+}
+
+.resetFiltersButton {
+  min-height: 43px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--ink);
+  color: var(--paper);
+  background: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 .filters label,
@@ -1176,6 +1188,7 @@ th {
   }
 
   .filters {
+    align-items: stretch;
     width: 100%;
     flex-direction: column;
   }

@@ -279,6 +279,13 @@ export function App() {
     localStorage.setItem("faultymart-theme", next ? "dark" : "light");
   }
 
+  function resetCatalogFilters() {
+    setQuery("");
+    setSort("featured");
+    setCategory("All");
+    setWishlistOnly(false);
+  }
+
   async function submitOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -508,6 +515,14 @@ export function App() {
                       <option value="price-high">Price: high to low</option>
                     </select>
                   </label>
+                  <button
+                    className="resetFiltersButton"
+                    type="button"
+                    onClick={resetCatalogFilters}
+                    data-testid="reset-catalog-filters"
+                  >
+                    Reset filters
+                  </button>
                 </div>
               </div>
 
@@ -518,15 +533,18 @@ export function App() {
                     className={category === item ? "categoryActive" : ""}
                     key={item}
                     onClick={() => setCategory(item)}
+                    data-testid={`category-filter-${item.toLowerCase()}`}
                   >
                     {item}
                   </button>
                 ))}
               </div>
 
-              <p className="resultCount">{visibleProducts.length} products</p>
+              <p className="resultCount" data-testid="product-result-count">
+                {visibleProducts.length} products
+              </p>
 
-              <div className="productGrid">
+              <div className="productGrid" data-testid="product-grid">
                 {visibleProducts.map((product) => (
                   <article className="productCard" key={product.id}>
                     <div className={`productArt ${product.color}`} aria-hidden="true">
