@@ -314,10 +314,10 @@ export function App() {
     }
   }
 
-  function cancelOrder(_id: string) {
+  function cancelOrder(id: string) {
     setOrders((current) =>
-      current.map((order, index) =>
-        index === 0 ? { ...order, status: "Cancelled" } : order,
+      current.map((order) =>
+        order.id === id ? { ...order, status: "Cancelled" } : order,
       ),
     );
   }
@@ -548,7 +548,10 @@ export function App() {
                       <td>{order.id}</td>
                       <td>{money.format(order.total)}</td>
                       <td>
-                        <span className={`status ${order.status.toLowerCase()}`}>
+                        <span
+                          className={`status ${order.status.toLowerCase()}`}
+                          data-testid={`order-status-${order.id}`}
+                        >
                           {order.status}
                         </span>
                       </td>
@@ -557,6 +560,7 @@ export function App() {
                           className="textButton"
                           disabled={order.status === "Cancelled"}
                           onClick={() => cancelOrder(order.id)}
+                          data-testid={`cancel-order-${order.id}`}
                         >
                           Cancel order
                         </button>
