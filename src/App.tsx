@@ -209,7 +209,7 @@ export function App() {
     (sum, line) => sum + line.price * line.quantity,
     0,
   );
-  const discount = couponApplied ? 0.1 : 0;
+  const discount = couponApplied ? subtotal * 0.1 : 0;
   const shipping = subtotal > 80 ? 0 : 7.5;
   const total = subtotal - discount + shipping;
 
@@ -788,12 +788,13 @@ export function App() {
                   <label htmlFor="coupon">Coupon code</label>
                   <div>
                     <input
+                      data-testid="coupon-input"
                       id="coupon"
                       value={coupon}
                       onChange={(event) => setCoupon(event.target.value)}
                       placeholder="Enter code"
                     />
-                    <button onClick={applyCoupon}>Apply</button>
+                    <button data-testid="coupon-apply-button" onClick={applyCoupon}>Apply</button>
                   </div>
                 </div>
 
@@ -804,7 +805,7 @@ export function App() {
                   </p>
                   <p>
                     <span>Discount</span>
-                    <strong>−{money.format(discount)}</strong>
+                    <strong data-testid="cart-discount-value">−{money.format(discount)}</strong>
                   </p>
                   <p>
                     <span>Shipping</span>
