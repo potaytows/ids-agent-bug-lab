@@ -210,7 +210,7 @@ export function App() {
     0,
   );
   const discount = couponApplied ? 0.1 : 0;
-  const shipping = subtotal > 80 ? 0 : 7.5;
+  const shipping = subtotal >= 50 ? 0 : 7.5;
   const total = subtotal - discount + shipping;
 
   function addToCart(product: Product) {
@@ -808,7 +808,7 @@ export function App() {
                   </p>
                   <p>
                     <span>Shipping</span>
-                    <strong>{shipping === 0 ? "Free" : money.format(shipping)}</strong>
+                    <strong data-testid="cart-shipping">{shipping === 0 ? "Free" : money.format(shipping)}</strong>
                   </p>
                   <p className="total">
                     <span>Total</span>
