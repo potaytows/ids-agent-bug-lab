@@ -286,6 +286,14 @@ export function App() {
     });
   }
 
+  function clearCart() {
+    setCart({});
+    setCoupon("");
+    setCouponApplied(false);
+    setNotice("Cart cleared.");
+    window.setTimeout(() => setNotice(""), 1800);
+  }
+
   function applyCoupon() {
     setCouponApplied(coupon === "SAVE10");
     setNotice(coupon === "SAVE10" ? "10% discount applied!" : "Coupon not found.");
@@ -767,6 +775,14 @@ export function App() {
                     </div>
                   ))}
                 </div>
+
+                <button
+                  className="textButton clearCartButton"
+                  onClick={clearCart}
+                  data-testid="clear-cart"
+                >
+                  Clear cart
+                </button>
 
                 <div className="couponRow">
                   <label htmlFor="coupon">Coupon code</label>

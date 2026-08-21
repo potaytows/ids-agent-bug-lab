@@ -781,6 +781,11 @@ footer p {
   display: grid;
 }
 
+.clearCartButton {
+  align-self: flex-end;
+  margin-top: 0.75rem;
+}
+
 .cartLine {
   display: grid;
   grid-template-columns: 74px 1fr auto;

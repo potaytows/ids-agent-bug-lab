@@ -60,3 +60,19 @@ test("a shopper can clear all saved items", async ({ page }) => {
   await expect(page.getByTestId("product-result-count")).toHaveText("6 products");
   await expect(page.getByTestId("clear-saved-items")).toHaveCount(0);
 });
+
+test("a shopper can clear the entire cart", async ({ page }) => {
+  await page.goto("/");
+  await page.getByTestId("add-to-cart-1").click();
+  await page.getByTestId("add-to-cart-2").click();
+  await page.getByTestId("cart-button").click();
+
+  await expect(page.locator(".cartLine")).toHaveCount(2);
+
+  await page.getByTestId("clear-cart").click();
+
+  await expect(page.getByText("Your cart is taking a nap.")).toBeVisible();
+  await expect(page.getByTestId("cart-button")).toContainText("0");
+  await expect(page.getByTestId("cart-toast")).toHaveText("Cart cleared.");
+  await expect(page.getByTestId("clear-cart")).toHaveCount(0);
+});
